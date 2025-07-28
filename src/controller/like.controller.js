@@ -1,8 +1,8 @@
 import { Like } from "../models/likes.models.js";
-import { User } from "../models/user.models.js";
+
 import mongoose from "mongoose";
 
-// ✅ 1. Get all liked videos
+//  1. Get all liked videos
 const getAllLikedVideos = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -28,7 +28,7 @@ const getAllLikedVideos = async (req, res) => {
   }
 };
 
-// ✅ 2. Toggle video like
+//  2. Toggle video like
 const toggleVideoLike = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -56,7 +56,7 @@ const toggleVideoLike = async (req, res) => {
   }
 };
 
-// ✅ 3. Toggle comment like
+//  3. Toggle comment like
 const toggleCommentLike = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -84,7 +84,7 @@ const toggleCommentLike = async (req, res) => {
   }
 };
 
-// ✅ 4. Toggle tweet like
+//  4. Toggle tweet like
 const toggleTweetLike = async (req, res) => {
   try {
     const userId = req.user?._id;
