@@ -18,6 +18,9 @@ const addTweet = async (req, res) => {
       owner: userId,
     });
 
+
+    await Tweet.save();
+
     return res.status(201).json({
       success: true,
       message: "Tweet added successfully",
