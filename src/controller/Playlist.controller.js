@@ -104,5 +104,40 @@ const getUserPlaylists = async (req, res) => {
     }
 };
 
+const createPlaylist = async (req, res) => {
+    try {
+        const { name, description, videoId } = req.body;
 
-export { addVideoToPlaylist,removeFromPlaylist,getUserPlaylists };
+        if (!name) {
+            return res.status(400).json({ error: "Playlist name is required" });
+        }
+        if (!description) {
+            return res.status(400).json({ error: "Playlist description is required" });
+        }
+        const user = req.user?._id;
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized user" });
+        }
+        const playlistData = {
+            name,
+            description,
+            owner: user,
+        };
+        if (videoId) {
+            playlistData.videos = [videoId];
+        }
+        const playlist = await Playlist.create(playlistData);
+
+        return res.status(201).json({
+            message: "Playlist created successfully",
+            playlist,
+        });
+    } catch (error) {
+        console.error("Error in making playlist:", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+export { addVideoToPlaylist,removeFromPlaylist,getUserPlaylists, createPlaylist };
