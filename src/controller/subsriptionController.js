@@ -65,4 +65,29 @@ const getSubscribedChannels=async(req,res)=>{
     }
 }
 
-export {toogleSubsscription,getSubscribedChannels}
+
+const getUserChannelSubscribers=async(req,res)=>{
+    try {
+        const {channelId}=req.params
+        if(!channelId){
+            throw new Error("channel is required")
+        }
+        const userId=req.user?._id
+        if(userId){
+            throw new Error("unauthorized user")
+        }
+        const subscriptions = await Subscription.find({ channel: channelId }).populate("subscriber");
+    
+        const subscribers = subscriptions.map((sub) => sub.subscriber);
+    
+        return res.status(200).json({
+          message: "Subscribers fetched successfully",
+          subscribers,
+        })
+    } catch (error) {
+        console.error("Error fetching subscribers:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export {toogleSubsscription,getSubscribedChannels,getUserChannelSubscribers }
