@@ -110,5 +110,40 @@ const updateVideo = async (req, res) => {
 };
 
 
+const togglePublishStatus=async(req,res)=>{
+   try {
+     const userId=req.user?._id
+     const {videoId}=req.params
+ 
+     if(!userId){
+         throw new Error("unauthorized user")
+     }
+ 
+     if(!videoId){
+         throw new Error("video file is required");
+     }
+ 
+     const video=await Video.findById(videoId);
+     if(!video){
+         throw new Error("video can't found")
+     }
+     if(video.owner.toString()!==userId.toString()){
+         throw new Error("you cant change the file publication status")
+     }
+ 
+     video.isPublished = !video.isPublished;
+     await video.save();
+ 
+      return res.status(200).json({
+       message: `Video is now ${video.isPublished ? "published" : "unpublished"}`,
+       video,
+     });
+   } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
+   }
+}
 
-export {getVideoId, deleteVideo, updateVideo}
+
+
+export {getVideoId, deleteVideo, updateVideo,togglePublishStatus}
