@@ -1,6 +1,72 @@
 import mongoose from "mongoose";
 import {Video} from "../models/videos.models.js"
 import { error } from "console";
+import { uploadInCloudinary } from "../utils/cloudinary.js";
+
+
+
+
+const publishVideo = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    if (!title || !description) {
+      throw new Error("title and description are required");
+    }
+
+    const userId = req.user?._id;
+    if (!userId) {
+      throw new Error("unauthorized user");
+    }
+
+  
+    const videoLocalPath = req.files?.videoFile?.[0]?.path;
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+
+    if (!videoLocalPath) {
+      throw new Error("video file is required");
+    }
+    if (!thumbnailLocalPath) {
+      throw new Error("thumbnail is required");
+    }
+
+  
+    const videoUpload = await uploadInCloudinary(videoLocalPath);
+    const thumbnailUpload = await uploadInCloudinary(thumbnailLocalPath);
+
+    if (!videoUpload?.url) {
+      throw new Error("Failed to upload video");
+    }
+    if (!thumbnailUpload?.url) {
+      throw new Error("Failed to upload thumbnail");
+    }
+
+    
+    const videoDoc = await Video.create({
+      videoFile: videoUpload.url,
+      thumbnail: thumbnailUpload.url,
+      title,
+      description,
+      views: 0,
+      duration: videoUpload.duration || 0,
+      isPublished: true,
+      owner: userId,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Video published successfully",
+      data: videoDoc,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
 
 
 
@@ -146,4 +212,4 @@ const togglePublishStatus=async(req,res)=>{
 
 
 
-export {getVideoId, deleteVideo, updateVideo,togglePublishStatus}
+export {getVideoId, deleteVideo, updateVideo,togglePublishStatus,publishVideo}
