@@ -37,6 +37,39 @@ const addComment = async (req, res) => {
   }
 };
 
+  const updateComment = async (req, res) => {
+    try {
+      const userId = req.user?._id;
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized user" });
+      }
+
+      const { videoId } = req.params;
+      if (!videoId) {
+        return res.status(400).json({ error: "Video ID is required" });
+      }
+
+      const { updatedComment } = req.body;
+      if (!updatedComment) {
+        return res.status(400).json({ error: "Updated comment is required" });
+      }
+
+      const oldComment = await Comment.findOne({ videoId, userId });
+      if (!oldComment) {
+        return res.status(404).json({ error: "Comment not found" });
+      }
+
+      oldComment.comment = updatedComment;
+      await oldComment.save();
+
+      return res.status(200).json({ message: "Comment updated successfully", comment: oldComment });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
 export{
-    addComment
+    addComment,
+    updateComment
 }
