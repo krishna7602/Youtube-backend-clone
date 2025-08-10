@@ -69,7 +69,37 @@ const addComment = async (req, res) => {
     }
   };
 
+
+const deleteComment = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized user" });
+    }
+
+    if (!videoId) {
+      return res.status(400).json({ error: "Video ID is required" });
+    }
+
+    // Correct method: findOneAndDelete for multiple filters
+    const comment = await Comment.findOneAndDelete({ videoId, userId });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 export{
     addComment,
-    updateComment
+    updateComment,
+    deleteComment
 }
