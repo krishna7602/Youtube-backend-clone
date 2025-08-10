@@ -38,21 +38,6 @@ vidTube is a video streaming platform built with modern web technologies.
 - **Other**: Multer, dotenv, cookie-parser
 
 
-📂 Project Structure
-
-Youtube-backend-clone/
-├── src/
-│ ├── config/ # DB and Cloudinary configs
-│ ├── controllers/ # Route logic
-│ ├── middlewares/ # Authentication, error handling
-│ ├── models/ # Mongoose schemas
-│ ├── routes/ # API endpoints
-│ ├── utils/ # Helper functions
-│ └── app.js # Express app setup
-├── .env # Environment variables
-├── package.json
-└── README.md
-
 ## Getting Started
 
 1. Clone the repository:
